@@ -27,5 +27,82 @@ def get_train_data(num_examples=3000):
     with open(annotation_file,'r') as f:
         annotations = json.load(f)
 
+        # storing captions and image names in lists
+        all_captions = []
+        all_img_names = []
+
+        for annot in annotations['annotations']:
+            caption = '<start>' + annot['caption'] + '<end>'
+            image_id = annot['image_id']
+            full_coco_image_path = PATH + 'COCO_train2014_' + '%012d.jpg' % (image_id)
+        
+            all_img_names.append(full_coco_image_path)
+            all_captions.append(caption)
     
+    # shuffling the captions and image_names together
+    # setting a random state
+    train_captions, img_name_vector = shuffle(all_captions,
+                                              all_img_names,
+                                              random_state=1)
+
+    # selecting the first 30000 captions from the shuffled set
+    
+    train_captions = train_captions[:num_examples]
+    img_name_vector = img_name_vector[:num_examples]
+    return train_captions, img_name_vector
+
+def load_image(image_path):
+    img = tf.read_file(image_path)
+    img = tf.image.decode_jpeg(img, channels=3)
+    img = tf.image.resize_images(img, (299, 299))
+    img = tf.keras.applications.inception_v3.preprocess_input(img)
+    return img, image_path
+
+def get_inception_model():
+    image_model = tf.keras.applications.InceptionV3(include_top=False, 
+                                                    weights='imagenet')
+    new_input = image_model.input
+    hidden_layer = image_model.layers[-1].output
+    
+    image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
+    return image_features_extract_model
+
+def image_to_feature(img_name_vector,image_features_extract_model):
+    # getting the unique images
+    encode_train = sorted(set(img_name_vector))
+    
+    # feel free to change the batch_size according to your system configuration
+    image_dataset = tf.data.Dataset.from_tensor_slices(encode_train).map(load_image).batch(16)
+    
+    for img, path in image_dataset:
+      batch_features = image_features_extract_model(img)
+      batch_features = tf.reshape(batch_features, 
+                                  (batch_features.shape[0], -1, batch_features.shape[3]))
+    
+      for bf, p in zip(batch_features, path):
+        path_of_feature = p.numpy().decode("utf-8")
+        np.save(path_of_feature, bf.numpy())
+
+def text_to_vec(train_captions):
+    top_k = 5000
+    tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=top_k, 
+                                                      oov_token="<unk>", 
+                                                      filters='!"#$%&()*+.,-/:;=?@[\]^_`{|}~ ')
+    tokenizer.fit_on_texts(train_captions)
+    # train_seqs = tokenizer.texts_to_sequences(train_captions)
+    
+    
+    tokenizer.word_index = {key:value for key, value in tokenizer.word_index.items() if value <= top_k}
+    # putting <unk> token in the word2idx dictionary
+    tokenizer.word_index[tokenizer.oov_token] = top_k + 1
+    tokenizer.word_index['<pad>'] = 0
+    train_seqs = tokenizer.texts_to_sequences(train_captions)
+    cap_vector = tf.keras.preprocessing.sequence.pad_sequences(train_seqs, padding='post')
+    return  tokenizer,cap_vector
+
+
+
+
+
+
     
