@@ -1,0 +1,9 @@
+captions.zip
+annotations/captions_train2014.json
+annotations/captions_val2014.json
+annotations/instances_train2014.json
+annotations/instances_val2014.json
+annotations/person_keypoints_train2014.json
+annotations/person_keypoints_val2014.json
+Utils/__pycache__/models.cpython-37.pyc
+Utils/__pycache__/Utils.cpython-37.pyc
