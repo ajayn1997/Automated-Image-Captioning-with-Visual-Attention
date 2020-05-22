@@ -6,9 +6,9 @@ import numpy as np
 import os
 import time
 
-from Utils.Utils import  get_train_data,get_inception_model,image_to_feature,text_to_vec
+from Utils import  get_train_data,get_inception_model,image_to_feature,text_to_vec
 
-from Utils.models import CNN_Encoder,RNN_Decoder ,loss_function
+from models import CNN_Encoder,RNN_Decoder ,loss_function
 
 print ("Dowloading dataset")
 train_captions, img_name_vector = get_train_data()

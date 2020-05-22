@@ -3,8 +3,8 @@ tf.enable_eager_execution()
 import pickle ,os
 import numpy as np
 
-from Utils.Utils import  get_inception_model, load_image
-from Utils.models import CNN_Encoder,RNN_Decoder
+from Utils import  get_inception_model, load_image
+from models import CNN_Encoder,RNN_Decoder
 
 with open('token.pkl', 'rb') as infile:
     tokenizer = pickle.load(infile)
