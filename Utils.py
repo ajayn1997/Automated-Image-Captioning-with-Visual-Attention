@@ -12,19 +12,26 @@ def get_train_data(num_examples=30000):
                                              origin = 'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
                                              extract = True)
     
-    annotation_file = os.path.dirname(annotation_zip)+'/annotations/captions_train2014.json'
+    annotation_file = os.path.dirname(annotation_zip)+'\\annotations\\captions_train2014.json'
 
     name_of_zip = 'train2014.zip'
-    if os.path.exists(os.path.abspath('.') + '/' + name_of_zip) :
+    '''
+    if os.path.exists(os.path.abspath('.') + '\\' + name_of_zip) == True:
         image_zip = tf.keras.utils.get_file(name_of_zip, 
                                           cache_subdir=os.path.abspath('.'),
                                           origin = 'http://images.cocodataset.org/zips/train2014.zip',
                                           extract = True)
-        PATH = os.path.dirname(image_zip)+'/train2014/'
+        PATH = os.path.dirname(image_zip)+'\\train2014\\'
     else:
       print ('Skipped')
-      PATH = os.path.abspath('.')+'/train2014/'
-
+      PATH = os.path.abspath('.')+'\\train2014\\'
+    
+    image_zip = tf.keras.utils.get_file(name_of_zip, 
+                                          cache_subdir=os.path.abspath('.'),
+                                          origin = 'http://images.cocodataset.org/zips/train2014.zip',
+                                          extract = True)
+    '''
+    PATH = os.path.abspath('.')+'\\train2014\\'
     # read the json file
     with open(annotation_file,'r') as f:
         annotations = json.load(f)
@@ -103,7 +110,7 @@ def text_to_vec(train_captions):
     return  tokenizer,cap_vector
 
 
-get_train_data()
+
 
 
     

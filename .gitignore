@@ -7,3 +7,7 @@ annotations/person_keypoints_train2014.json
 annotations/person_keypoints_val2014.json
 Utils/__pycache__/models.cpython-37.pyc
 Utils/__pycache__/Utils.cpython-37.pyc
+train2014/
+train2014.zip
+__pycache__/models.cpython-37.pyc
+__pycache__/Utils.cpython-37.pyc
